@@ -1,3 +1,12 @@
+---
+title: Traffic Vehicle Detector
+emoji: 🚗
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
+
 # Vehicle-Detection
 
 A Deep-Learning Approach for Detection and Classification of Vehicles for Traffic Management.
