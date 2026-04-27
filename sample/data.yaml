@@ -1,0 +1,27 @@
+# data.yaml (auto-generated)
+
+path: "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample"
+
+train:
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Four Wheeler/train/images"
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Large Vehicle/train/images"
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Three Wheeler/train/images"
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Two Wheeler/train/images"
+
+val:
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Four Wheeler/valid/images"
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Large Vehicle/valid/images"
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Three Wheeler/valid/images"
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Two Wheeler/valid/images"
+
+test:
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Four Wheeler/test/images"
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Large Vehicle/test/images"
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Three Wheeler/test/images"
+  - "c:/Users/OMEN/Documents/Engr Abubakar Isa Project/sample/Two Wheeler/test/images"
+
+# number of classes
+nc: 4
+
+# class names (ids: 0–3)
+names: ["Four_Wheeler", "Large_Vehicle", "Three_Wheeler", "Two_Wheeler"]

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Detection API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --success-hover: #059669;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        :root.light-mode {
+            --bg-dark: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --text-light: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            background-image: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15), transparent 25%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .dashboard {
+            width: 95%;
+            max-width: 1400px;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-weight: 700;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h1 span.pulse {
+            width: 12px;
+            height: 12px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success);
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 30px;
+            margin-top: 30px;
+            align-items: start;
+        }
+
+        .upload-section {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .upload-section:hover,
+        .upload-section.dragover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .upload-content {
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        #inputPreview {
+            display: none;
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #videoPreview {
+            display: none;
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid var(--accent);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: var(--success-hover);
+        }
+
+        .btn-warning {
+            background-color: #ef4444;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        .settings-panel {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-group select,
+        .form-group input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .result-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 300px;
+        }
+
+        .result-section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .result-section img {
+            width: 100%;
+            height: auto;
+            max-height: 450px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .comparison-layout {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .comparison-layout .result-section {
+            padding: 15px;
+            min-height: auto;
+        }
+
+        /* --- Analytical Report CSS --- */
+        .analysis-report {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 1), rgba(15, 23, 42, 1));
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .analysis-report h3 {
+            margin-top: 0;
+            color: var(--text-light);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-card span.label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card span.value {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .winner-banner {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: none;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media(max-width: 768px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
+            <h1><span class="pulse"></span>Vehicle Detection & Classification by Abubakar Isa</h1>
+            <button id="themeToggle" class="btn" style="background-color: transparent; color: var(--text-light); border: 1px solid var(--text-muted); font-size: 0.9rem;">☀️ Light Mode</button>
+        </div>
+
+        <div class="layout" id="mainLayout">
+            <div>
+                <form id="uploadForm">
+                    <div class="upload-section" id="dropZone">
+                        <div class="upload-content" id="uploadContent"
+                            onclick="document.getElementById('imageInput').click()">
+                            <div class="upload-icon" id="uploadIcon">📸</div>
+                            <h3 id="uploadTitle">Upload or Drop Traffic Image</h3>
+                            <p id="uploadDesc" style="color: var(--text-muted); font-size: 0.9rem;">Supports JPG, PNG
+                            </p>
+                        </div>
+                        <input type="file" id="imageInput" accept="image/*">
+
+                        <video id="videoPreview" autoplay playsinline></video>
+                        <img id="inputPreview" alt="Input Preview">
+
+                        <p id="fileName" style="margin-top: 15px; color: var(--success); font-weight: bold;"></p>
+                    </div>
+
+                    <div style="display:flex; justify-content:center; margin-top: 10px; gap: 10px; width: 100%;">
+                        <button type="button" class="btn" style="background-color: var(--text-muted); width:100%;"
+                            id="btnCameraToggle" onclick="toggleCamera(event)">📷 Show Live Camera</button>
+                        <button type="button" class="btn btn-success" style="display:none; width: 100%;" id="btnCapture"
+                            onclick="captureImage(event)">✅ Snap & Analyze</button>
+                    </div>
+
+                    <div class="settings-panel">
+                        <div class="form-group">
+                            <label>Neural Architecture (For Single Analysis)</label>
+                            <select id="architecture">
+                                <option value="yolo">Ultralytics YOLOv11</option>
+                                <option value="rcnn">PyTorch Faster R-CNN (ResNet-50)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Confidence Threshold: <span id="confValue">0.25</span></label>
+                            <input type="range" id="confidence" min="0.05" max="0.95" step="0.05" value="0.25"
+                                oninput="document.getElementById('confValue').innerText = this.value">
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn" id="btnRunSingle">Single Analysis</button>
+                        <button type="button" id="btnCompare" class="btn btn-success">⚖️ Compare Side-by-Side</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="resultsWrapper">
+                <!-- Single Analysis View -->
+                <div class="result-section" id="singleResultContainer">
+                    <div class="loading" id="loader"></div>
+                    <img id="resultImage" alt="Prediction Output" />
+                    <div id="statsBox" style="margin-top: 15px; display: none;">
+                        <h3 style="margin: 0; color:var(--text-light);" id="objCount"></h3>
+                        <p style="color: var(--text-muted); margin: 5px 0 0 0; font-size: 0.9rem;">Processed in
+                            real-time</p>
+                    </div>
+                </div>
+
+                <!-- Comparison View -->
+                <div class="comparison-layout" id="compareResultContainer">
+                    <!-- YOLO Box -->
+                    <div class="result-section">
+                        <h3 style="color: var(--accent);">Ultralytics YOLOv11</h3>
+                        <div class="loading" id="loaderYolo"></div>
+                        <img id="resultImageYolo" alt="YOLO Output" />
+                        <div id="statsBoxYolo" style="margin-top: 15px; display: none;">
+                            <p style="margin: 0; font-weight: 600;" id="objCountYolo"></p>
+                            <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--text-muted);" id="speedYolo">
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Faster R-CNN Box -->
+                    <div class="result-section">
+                        <h3 style="color: var(--success);">Faster R-CNN</h3>
+                        <div class="loading" id="loaderRcnn"></div>
+                        <img id="resultImageRcnn" alt="RCNN Output" />
+                        <div id="statsBoxRcnn" style="margin-top: 15px; display: none;">
+                            <p style="margin: 0; font-weight: 600;" id="objCountRcnn"></p>
+                            <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--text-muted);" id="speedRcnn">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytical Report -->
+                <div class="analysis-report" id="analysisReport">
+                    <h3>📊 AI Architectures Analysis Report</h3>
+                    <div class="report-grid">
+                        <div class="stat-card">
+                            <span class="label">Count Variance</span>
+                            <span class="value" id="repCount"></span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="label">Average Confidence</span>
+                            <span class="value" id="repConf"></span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="label">Speed Advantage</span>
+                            <span class="value" id="repSpeed"></span>
+                        </div>
+                    </div>
+                    <div class="winner-banner" id="winnerBanner">
+                        🏆 <span id="winnerText"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const fileName = document.getElementById('fileName');
+        const form = document.getElementById('uploadForm');
+        const dropZone = document.getElementById('dropZone');
+        const inputPreview = document.getElementById('inputPreview');
+
+        const uploadContent = document.getElementById('uploadContent');
+
+        const singleContainer = document.getElementById('singleResultContainer');
+        const compareContainer = document.getElementById('compareResultContainer');
+        const analysisReport = document.getElementById('analysisReport');
+        
+        /* --- Theme Toggle Start --- */
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('light-mode');
+            if (document.documentElement.classList.contains('light-mode')) {
+                themeToggle.innerHTML = "🌙 Dark Mode";
+                themeToggle.style.color = "var(--text-light)";
+            } else {
+                themeToggle.innerHTML = "☀️ Light Mode";
+                themeToggle.style.color = "var(--text-light)";
+            }
+        });
+        /* --- Theme Toggle End --- */
+
+        /* --- Camera Integration Start --- */
+        let stream = null;
+        let isCameraActive = false;
+
+        async function toggleCamera(e) {
+            e.stopPropagation();
+
+            if (!isCameraActive) {
+                // Initialize Camera
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                    document.getElementById('videoPreview').srcObject = stream;
+                    document.getElementById('videoPreview').style.display = 'block';
+
+                    uploadContent.style.display = 'none';
+                    inputPreview.style.display = 'none';
+                    fileName.innerText = '';
+
+                    const btnToggle = document.getElementById('btnCameraToggle');
+                    btnToggle.innerText = "❌ Cancel Camera";
+                    btnToggle.classList.remove('btn-success');
+                    btnToggle.classList.add('btn-warning');
+
+                    document.getElementById('btnCapture').style.display = 'inline-block';
+                    isCameraActive = true;
+                } catch (err) {
+                    alert("Camera access denied! Please allow webcam permissions in your browser.");
+                    console.error(err);
+                }
+            } else {
+                // Stop Camera
+                stopCamera();
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+
+            document.getElementById('videoPreview').style.display = 'none';
+            uploadContent.style.display = 'block';
+
+            const btnToggle = document.getElementById('btnCameraToggle');
+            btnToggle.innerHTML = "📷 Show Live Camera";
+            btnToggle.classList.remove('btn-warning');
+            btnToggle.style.backgroundColor = "var(--text-muted)";
+
+            document.getElementById('btnCapture').style.display = 'none';
+            isCameraActive = false;
+        }
+
+        function captureImage(e) {
+            e.stopPropagation();
+            const video = document.getElementById('videoPreview');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob((blob) => {
+                const file = new File([blob], "live_snap.jpg", { type: "image/jpeg" });
+
+                // assign directly to the input via DataTransfer
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                imageInput.files = dt.files;
+
+                // turn off the live view
+                stopCamera();
+
+                // Show it natively using standard feature
+                handleFileSelection(file);
+
+                // Instantly hit the Compare side by side
+                document.getElementById('btnCompare').click();
+
+            }, 'image/jpeg', 0.95);
+        }
+        /* --- Camera Integration End --- */
+
+        function handleFileSelection(file) {
+            if (!file) return;
+            fileName.innerText = file.name;
+
+            const objectUrl = URL.createObjectURL(file);
+            inputPreview.src = objectUrl;
+            inputPreview.style.display = 'inline-block';
+
+            uploadContent.style.display = 'none';
+        }
+
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                imageInput.files = e.dataTransfer.files;
+                handleFileSelection(imageInput.files[0]);
+            }
+        });
+
+        imageInput.addEventListener('change', () => {
+            if (imageInput.files[0]) handleFileSelection(imageInput.files[0]);
+        });
+
+        const resetUI = () => {
+            analysisReport.style.display = 'none';
+        }
+
+        // SINGLE ANALYSIS
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!imageInput.files[0]) return alert("Please select or snap an image first!");
+            resetUI();
+
+            singleContainer.style.display = 'flex';
+            compareContainer.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('image', imageInput.files[0]);
+            formData.append('architecture', document.getElementById('architecture').value);
+            formData.append('confidence', document.getElementById('confidence').value);
+
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('resultImage').style.display = 'none';
+            document.getElementById('statsBox').style.display = 'none';
+
+            try {
+                const res = await fetch('/api/predict', { method: 'POST', body: formData });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('resultImage').src = data.output_image_url + "?t=" + new Date().getTime();
+                    document.getElementById('resultImage').style.display = 'block';
+                    document.getElementById('objCount').innerText = `${data.count} Objects Detected (${document.getElementById('architecture').value.toUpperCase()})`;
+                    document.getElementById('statsBox').style.display = 'block';
+                } else {
+                    alert("Error processing image: " + data.error);
+                }
+            } catch (err) {
+                alert("Server error occurred!");
+                console.error(err);
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
+        });
+
+        // SIDE-BY-SIDE COMPARE
+        document.getElementById('btnCompare').addEventListener('click', async () => {
+            if (!imageInput.files[0]) return alert("Please select or snap an image first!");
+            resetUI();
+
+            // UI Adjustments
+            singleContainer.style.display = 'none';
+            compareContainer.style.display = 'grid';
+
+            const conf = document.getElementById('confidence').value;
+
+            // Prepare YOLO
+            const formYolo = new FormData();
+            formYolo.append('image', imageInput.files[0]);
+            formYolo.append('architecture', 'yolo');
+            formYolo.append('confidence', conf);
+
+            // Prepare RCNN
+            const formRcnn = new FormData();
+            formRcnn.append('image', imageInput.files[0]);
+            formRcnn.append('architecture', 'rcnn');
+            formRcnn.append('confidence', conf);
+
+            ['Yolo', 'Rcnn'].forEach(type => {
+                document.getElementById(`loader${type}`).style.display = 'block';
+                document.getElementById(`resultImage${type}`).style.display = 'none';
+                document.getElementById(`statsBox${type}`).style.display = 'none';
+                document.getElementById(`speed${type}`).innerText = '';
+            });
+
+            let timeYolo = 0;
+            let timeRcnn = 0;
+
+            const fetchYolo = async () => {
+                const s = performance.now();
+                const res = await fetch('/api/predict', { method: 'POST', body: formYolo });
+                timeYolo = performance.now() - s;
+                return res.json();
+            };
+
+            const fetchRcnn = async () => {
+                const s = performance.now();
+                const res = await fetch('/api/predict', { method: 'POST', body: formRcnn });
+                timeRcnn = performance.now() - s;
+                return res.json();
+            };
+
+            try {
+                const [dataYolo, dataRcnn] = await Promise.all([fetchYolo(), fetchRcnn()]);
+
+                if (dataYolo.success) {
+                    document.getElementById('resultImageYolo').src = dataYolo.output_image_url + "?t=" + new Date().getTime();
+                    document.getElementById('resultImageYolo').style.display = 'block';
+                    document.getElementById('objCountYolo').innerText = `${dataYolo.count} Detected`;
+                    document.getElementById('speedYolo').innerText = `Computed in ${timeYolo.toFixed(0)} ms`;
+                    document.getElementById('statsBoxYolo').style.display = 'block';
+                }
+
+                if (dataRcnn.success) {
+                    document.getElementById('resultImageRcnn').src = dataRcnn.output_image_url + "?t=" + new Date().getTime();
+                    document.getElementById('resultImageRcnn').style.display = 'block';
+                    document.getElementById('objCountRcnn').innerText = `${dataRcnn.count} Detected`;
+                    document.getElementById('speedRcnn').innerText = `Computed in ${timeRcnn.toFixed(0)} ms`;
+                    document.getElementById('statsBoxRcnn').style.display = 'block';
+                }
+
+                if (dataYolo.success && dataRcnn.success) {
+                    const avgConfY = dataYolo.predictions.length ? (dataYolo.predictions.reduce((acc, p) => acc + p.confidence, 0) / dataYolo.predictions.length) : 0;
+                    const avgConfR = dataRcnn.predictions.length ? (dataRcnn.predictions.reduce((acc, p) => acc + p.confidence, 0) / dataRcnn.predictions.length) : 0;
+
+                    const countDiff = Math.abs(dataYolo.count - dataRcnn.count);
+
+                    let speedWinner = "";
+                    let speedMultiplier = "";
+                    if (timeYolo < timeRcnn) {
+                        speedWinner = "YOLOv11";
+                        speedMultiplier = (timeRcnn / timeYolo).toFixed(1);
+                    } else {
+                        speedWinner = "Faster R-CNN";
+                        speedMultiplier = (timeYolo / timeRcnn).toFixed(1);
+                    }
+
+                    document.getElementById('repCount').innerText = countDiff === 0 ? "Matched (Identical)" : `${countDiff} Obj Difference`;
+                    document.getElementById('repConf').innerHTML = `<span style="color:var(--accent);">YOLO: ${(avgConfY * 100).toFixed(1)}%</span> <br/> <span style="color:var(--success);">RCNN: ${(avgConfR * 100).toFixed(1)}%</span>`;
+                    document.getElementById('repSpeed').innerText = `${speedMultiplier}x Faster (${speedWinner})`;
+
+                    let yoloScore = 0;
+                    let rcnnScore = 0;
+
+                    if (dataYolo.count > dataRcnn.count) yoloScore += 2;
+                    else if (dataRcnn.count > dataYolo.count) rcnnScore += 2;
+                    else { yoloScore += 1; rcnnScore += 1; }
+
+                    if (avgConfY > avgConfR) yoloScore += 1;
+                    else if (avgConfR > avgConfY) rcnnScore += 1;
+
+                    if (timeYolo < timeRcnn) yoloScore += 1;
+                    else rcnnScore += 1;
+
+                    let winnerText = "";
+                    if (yoloScore > rcnnScore) {
+                        winnerText = "Ultralytics YOLOv11 ranks highest! (Faster Speed & Better Accuracy)";
+                        document.getElementById('winnerBanner').style.color = "var(--accent)";
+                        document.getElementById('winnerBanner').style.backgroundColor = "rgba(59, 130, 246, 0.15)";
+                    } else if (rcnnScore > yoloScore) {
+                        winnerText = "Faster R-CNN ranks highest! (Better Core Detection Matrix)";
+                        document.getElementById('winnerBanner').style.color = "var(--success)";
+                        document.getElementById('winnerBanner').style.backgroundColor = "rgba(16, 185, 129, 0.15)";
+                    } else {
+                        winnerText = "Models Tied! Excellent robust detection across both architectures.";
+                        document.getElementById('winnerBanner').style.color = "var(--text-light)";
+                        document.getElementById('winnerBanner').style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                    }
+
+                    document.getElementById('winnerText').innerText = winnerText;
+                    document.getElementById('analysisReport').style.display = 'block';
+                }
+
+            } catch (err) {
+                alert("Error during comparison analysis!");
+                console.error(err);
+            } finally {
+                document.getElementById('loaderYolo').style.display = 'none';
+                document.getElementById('loaderRcnn').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

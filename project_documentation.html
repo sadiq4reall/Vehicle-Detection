@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AfricanNLP — ArXiv Research Assistant Documentation</title>
+    <meta name="description" content="Technical documentation for the AfricanNLP ArXiv Research Assistant platform.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fafafa;
+            --bg2: #ffffff;
+            --bg3: #f1f5f9;
+            --text: #1e293b;
+            --text2: #475569;
+            --text3: #94a3b8;
+            --accent: #0f766e;
+            --accent-light: #ccfbf1;
+            --accent-hover: #115e59;
+            --border: #e2e8f0;
+            --code-bg: #f1f5f9;
+            --card-shadow: 0 1px 3px rgba(0, 0, 0, .04), 0 1px 2px rgba(0, 0, 0, .06);
+            --card-hover: 0 4px 12px rgba(0, 0, 0, .08);
+            --success: #16a34a;
+            --warn: #d97706;
+            --info: #0284c7;
+            --subtle-bg: rgba(15, 118, 110, .04)
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --bg2: #1e293b;
+            --bg3: #334155;
+            --text: #e2e8f0;
+            --text2: #94a3b8;
+            --text3: #64748b;
+            --accent: #2dd4bf;
+            --accent-light: rgba(45, 212, 191, .12);
+            --accent-hover: #5eead4;
+            --border: #334155;
+            --code-bg: #1e293b;
+            --card-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+            --card-hover: 0 4px 12px rgba(0, 0, 0, .3);
+            --success: #22c55e;
+            --warn: #fbbf24;
+            --info: #38bdf8;
+            --subtle-bg: rgba(45, 212, 191, .06)
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 72px
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            transition: background .25s, color .25s
+        }
+
+        /* TOPBAR */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            transition: all .25s
+        }
+
+        .topbar-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none
+        }
+
+        .logo svg {
+            color: var(--accent)
+        }
+
+        .topbar nav {
+            display: flex;
+            gap: 20px;
+            align-items: center
+        }
+
+        .topbar nav a {
+            text-decoration: none;
+            color: var(--text2);
+            font-size: .82rem;
+            font-weight: 500;
+            transition: color .2s;
+            letter-spacing: -.01em
+        }
+
+        .topbar nav a:hover {
+            color: var(--accent)
+        }
+
+        .theme-btn {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 34px;
+            height: 34px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s;
+            color: var(--text2)
+        }
+
+        .theme-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        .theme-btn svg {
+            width: 16px;
+            height: 16px
+        }
+
+        /* HERO */
+        .hero {
+            margin-top: 56px;
+            padding: 64px 24px 48px;
+            text-align: center;
+            background: var(--subtle-bg);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
+            letter-spacing: -.03em;
+            margin-bottom: 10px;
+            color: var(--text)
+        }
+
+        .hero .sub {
+            font-size: .95rem;
+            color: var(--text2);
+            max-width: 620px;
+            margin: 0 auto 20px;
+            line-height: 1.7
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: .72rem;
+            font-weight: 600;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            color: var(--text2);
+            letter-spacing: .02em
+        }
+
+        .badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%
+        }
+
+        /* MAIN */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px 64px
+        }
+
+        section {
+            margin-bottom: 48px
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--accent);
+            margin-bottom: 6px
+        }
+
+        .section-label svg {
+            width: 14px;
+            height: 14px
+        }
+
+        section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: -.02em
+        }
+
+        section .desc {
+            color: var(--text2);
+            margin-bottom: 24px;
+            max-width: 640px;
+            font-size: .9rem
+        }
+
+        /* ICON */
+        .ic {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            color: var(--accent)
+        }
+
+        .ic-lg {
+            width: 22px;
+            height: 22px
+        }
+
+        /* CARDS */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px
+        }
+
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            transition: all .2s
+        }
+
+        .card:hover {
+            box-shadow: var(--card-hover);
+            border-color: var(--accent)
+        }
+
+        .card .card-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            background: var(--accent-light);
+            color: var(--accent)
+        }
+
+        .card .card-icon svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .card h3 {
+            font-size: .95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: -.01em
+        }
+
+        .card p {
+            font-size: .83rem;
+            color: var(--text2);
+            line-height: 1.6
+        }
+
+        /* CODE */
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .78rem;
+            overflow-x: auto;
+            line-height: 1.9;
+            margin: 14px 0;
+            color: var(--text)
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: .8rem
+        }
+
+        /* TABLE */
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: .83rem
+        }
+
+        .doc-table th,
+        .doc-table td {
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .doc-table th {
+            background: var(--bg3);
+            font-weight: 600;
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--text3)
+        }
+
+        .doc-table tr:hover td {
+            background: var(--subtle-bg)
+        }
+
+        /* ARCH */
+        .arch-box {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 28px;
+            overflow-x: auto
+        }
+
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin: 16px 0
+        }
+
+        .arch-node {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: .78rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            white-space: nowrap;
+            color: var(--text)
+        }
+
+        .arch-node small {
+            display: block;
+            font-size: .68rem;
+            color: var(--text3);
+            font-weight: 400;
+            margin-top: 2px
+        }
+
+        .arch-node.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent)
+        }
+
+        .arch-node.primary small {
+            color: rgba(255, 255, 255, .7)
+        }
+
+        .arch-arrow {
+            color: var(--text3);
+            font-size: .9rem;
+            display: flex;
+            align-items: center
+        }
+
+        .arch-arrow svg {
+            width: 16px;
+            height: 16px
+        }
+
+        /* FILE TREE */
+        .file-tree {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px 22px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .78rem;
+            line-height: 2;
+            overflow-x: auto
+        }
+
+        .file-tree .dir {
+            color: var(--accent);
+            font-weight: 600
+        }
+
+        .file-tree .file {
+            color: var(--text2)
+        }
+
+        .file-tree .cmt {
+            color: var(--text3);
+            font-style: italic
+        }
+
+        /* ACCORDION */
+        .accordion {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0
+        }
+
+        .accordion summary {
+            padding: 14px 18px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: .88rem;
+            background: var(--bg2);
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background .2s;
+            color: var(--text)
+        }
+
+        .accordion summary:hover {
+            background: var(--bg3)
+        }
+
+        .accordion summary::before {
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-left: 5px solid var(--text3);
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            transition: transform .2s;
+            flex-shrink: 0
+        }
+
+        .accordion[open] summary::before {
+            transform: rotate(90deg)
+        }
+
+        .accordion summary svg {
+            width: 16px;
+            height: 16px;
+            color: var(--accent);
+            flex-shrink: 0
+        }
+
+        .accordion .inner {
+            padding: 18px;
+            background: var(--bg);
+            border-top: 1px solid var(--border)
+        }
+
+        /* ALERT */
+        .alert {
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin: 14px 0;
+            font-size: .83rem;
+            border-left: 3px solid;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.6
+        }
+
+        .alert svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            margin-top: 2px
+        }
+
+        .alert.info {
+            background: rgba(2, 132, 199, .06);
+            border-color: var(--info)
+        }
+
+        .alert.info svg {
+            color: var(--info)
+        }
+
+        .alert.success {
+            background: rgba(22, 163, 74, .06);
+            border-color: var(--success)
+        }
+
+        .alert.warn {
+            background: rgba(217, 119, 6, .06);
+            border-color: var(--warn)
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 32px 24px;
+            border-top: 1px solid var(--border);
+            color: var(--text3);
+            font-size: .78rem
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none
+        }
+
+        footer a:hover {
+            text-decoration: underline
+        }
+
+        /* SCREENSHOT */
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 16px
+        }
+
+        .screenshot-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all .25s
+        }
+
+        .screenshot-card:hover {
+            box-shadow: var(--card-hover);
+            transform: translateY(-2px)
+        }
+
+        .screenshot-card img {
+            width: 100%;
+            display: block
+        }
+
+        .screenshot-card .caption {
+            padding: 12px 16px;
+            font-size: .8rem;
+            font-weight: 500;
+            color: var(--text2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid var(--border)
+        }
+
+        .screenshot-card .caption svg {
+            width: 14px;
+            height: 14px;
+            color: var(--accent)
+        }
+
+        .two-col {
+            grid-template-columns: 1fr 1fr
+        }
+
+        /* SECTION DIVIDER */
+        section {
+            position: relative;
+            padding-top: 8px
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px
+        }
+
+        @media(max-width:768px) {
+            .topbar nav a.hide-sm {
+                display: none
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr
+            }
+
+            .arch-flow {
+                flex-direction: column
+            }
+        }
+    </style>
+
+    <!-- SVG ICON SPRITE (hidden) -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+        <symbol id="i-newspaper" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+                d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
+            <path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6z" />
+        </symbol>
+        <symbol id="i-bot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 8V4H8" />
+            <rect width="16" height="12" x="4" y="8" rx="2" />
+            <path d="M2 14h2M20 14h2M15 13v2M9 13v2" />
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+        </symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18" />
+            <path d="m19 9-5 5-4-4-3 3" />
+        </symbol>
+        <symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+                d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
+        </symbol>
+        <symbol id="i-headphones" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+                d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
+        </symbol>
+        <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+                d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z" />
+            <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65" />
+            <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65" />
+        </symbol>
+        <symbol id="i-database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3" />
+            <path d="M3 5v14a9 3 0 0 0 18 0V5" />
+            <path d="M3 12a9 3 0 0 0 18 0" />
+        </symbol>
+        <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            <path d="M2 12h20" />
+        </symbol>
+        <symbol id="i-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" />
+            <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" />
+            <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" />
+            <path d="M17.599 6.5a3 3 0 0 0 .399-1.375" />
+            <path d="M6.003 5.125A3 3 0 0 0 6.401 6.5" />
+            <path d="M3.477 10.896a4 4 0 0 1 .585-.396" />
+            <path d="M19.938 10.5a4 4 0 0 1 .585.396" />
+            <path d="M6 18a4 4 0 0 1-1.967-.516" />
+            <path d="M19.967 17.484A4 4 0 0 1 18 18" />
+        </symbol>
+        <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+                d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+        </symbol>
+        <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="6" />
+            <circle cx="12" cy="12" r="2" />
+        </symbol>
+        <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6" />
+            <polyline points="8 6 2 12 8 18" />
+        </symbol>
+        <symbol id="i-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="m7.5 4.27 9 5.15" />
+            <path
+                d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+            <path d="m3.3 7 8.7 5 8.7-5" />
+            <path d="M12 22V12" />
+        </symbol>
+        <symbol id="i-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5" />
+            <line x1="12" x2="20" y1="19" y2="19" />
+        </symbol>
+        <symbol id="i-rocket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+            <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+        </symbol>
+        <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="14" x="2" y="3" rx="2" />
+            <line x1="8" x2="16" y1="21" y2="21" />
+            <line x1="12" x2="12" y1="17" y2="21" />
+        </symbol>
+        <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+                d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14" />
+            <path d="M12 5v14" />
+        </symbol>
+        <symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+        </symbol>
+        <symbol id="i-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+            <path
+                d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+        </symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+        </symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+        </symbol>
+        <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 16v-4M12 8h.01" />
+        </symbol>
+        <symbol id="i-docker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M17 7V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2" />
+            <line x1="12" y1="12" x2="12" y2="16" />
+            <line x1="8" y1="12" x2="8" y2="16" />
+            <line x1="16" y1="12" x2="16" y2="16" />
+        </symbol>
+    </svg>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="logo" href="#">
+                <svg class="ic-lg">
+                    <use href="#i-globe" />
+                </svg> AfricanNLP Docs
+            </a>
+            <nav>
+                <a href="#architecture">Architecture</a>
+                <a href="#modules" class="hide-sm">Modules</a>
+                <a href="#api" class="hide-sm">API</a>
+                <a href="#setup">Setup</a>
+                <a href="#troubleshooting" class="hide-sm">FAQ</a>
+                <button class="theme-btn" id="themeToggle" title="Toggle theme">
+                    <svg class="icon-sun">
+                        <use href="#i-sun" />
+                    </svg>
+                    <svg class="icon-moon" style="display:none">
+                        <use href="#i-moon" />
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1>ArXiv Research Assistant</h1>
+        <p class="sub">An AI-powered platform for discovering, analyzing, and chatting with scientific papers —
+            purpose-built for African NLP research. Powered by ArewaDS.</p>
+        <div class="badge-row">
+            <span class="badge"><span class="dot" style="background:var(--success)"></span> v0.0.6</span>
+            <span class="badge"><span class="dot" style="background:var(--info)"></span> Python 3.10</span>
+            <span class="badge"><span class="dot" style="background:var(--warn)"></span> MIT License</span>
+            <span class="badge"><span class="dot" style="background:var(--accent)"></span> Gradio UI</span>
+        </div>
+        <div class="badge-row" style="margin-top:10px">
+            <a href="https://github.com/alawalmuazu/AfricaNLP" target="_blank" class="badge"
+                style="text-decoration:none;cursor:pointer"><svg class="ic" style="width:14px;height:14px">
+                    <use href="#i-code" />
+                </svg> GitHub Repository</a>
+            <a href="https://huggingface.co/spaces/ArewaDS/arxiv-research-assistant?logs=container" target="_blank"
+                class="badge" style="text-decoration:none;cursor:pointer"><svg class="ic"
+                    style="width:14px;height:14px">
+                    <use href="#i-rocket" />
+                </svg> HuggingFace Space</a>
+        </div>
+        <div
+            style="margin-top:18px;display:flex;flex-wrap:wrap;justify-content:center;gap:16px;font-size:.82rem;color:var(--text2)">
+            <span style="display:flex;align-items:center;gap:6px"><svg class="ic" style="width:14px;height:14px">
+                    <use href="#i-brain" />
+                </svg> <strong style="color:var(--text)">Ali Lawal Muazu</strong></span>
+            <span style="display:flex;align-items:center;gap:6px"><svg class="ic" style="width:14px;height:14px">
+                    <use href="#i-sparkle" />
+                </svg> <strong style="color:var(--text)">Shamsuddeen H. Muhammad</strong> <span
+                    style="font-size:.7rem;padding:2px 8px;border-radius:4px;background:var(--accent-light);color:var(--accent);font-weight:600">Google
+                    DeepMind Fellow</span></span>
+            <span style="display:flex;align-items:center;gap:6px"><svg class="ic" style="width:14px;height:14px">
+                    <use href="#i-globe" />
+                </svg> <strong style="color:var(--text)">HausaNLP Community</strong></span>
+        </div>
+    </section>
+
+    <div class="container" style="padding-top:40px">
+
+        <!-- OVERVIEW -->
+        <section id="overview">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-layers" />
+                </svg> Overview</span>
+            <h2>What is AfricanNLP?</h2>
+            <p class="desc">A full-stack research assistant that scrapes ArXiv for papers about African languages and
+                NLP, stores them in a local ChromaDB vector database, and exposes an AI chatbot (ReAct Agent) that can
+                search, summarize, and generate deep research reports.</p>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-newspaper" />
+                        </svg></div>
+                    <h3>Blog-Style Feed</h3>
+                    <p>Browse the latest AfricanNLP papers in a responsive card layout with category filters for 12+
+                        African languages.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-bot" />
+                        </svg></div>
+                    <h3>AI Chatbot</h3>
+                    <p>LangChain ReAct agent backed by Gemini, Groq, or OpenAI that searches the vector store and
+                        answers research questions.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-search" />
+                        </svg></div>
+                    <h3>Deep Research Agent</h3>
+                    <p>Autonomous pipeline: Search → Select → Read PDF → Generate structured report using Gemini 1.5
+                        Flash.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-chart" />
+                        </svg></div>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Plotly-powered charts showing publication activity over time and topic/category distribution.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-sparkle" />
+                        </svg></div>
+                    <h3>TL;DR Summaries</h3>
+                    <p>One-click Gemini-powered 3-bullet summaries of any paper abstract (problem → method → result).
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-headphones" />
+                        </svg></div>
+                    <h3>Text-to-Speech</h3>
+                    <p>Listen to paper titles and abstracts via Google TTS (gTTS) — ideal for on-the-go learning.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ARCHITECTURE -->
+        <section id="architecture">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-layers" />
+                </svg> System Design</span>
+            <h2>Architecture</h2>
+            <p class="desc">Three-tier design: Gradio web layer → LangChain agent and AI processing → Local ChromaDB
+                vector store and ArXiv API.</p>
+            <div class="arch-box">
+                <div class="arch-flow">
+                    <span class="arch-node">User</span>
+                    <span class="arch-arrow"><svg class="ic">
+                            <use href="#i-arrow" />
+                        </svg></span>
+                    <span class="arch-node primary">Gradio UI<small>app.py</small></span>
+                    <span class="arch-arrow"><svg class="ic">
+                            <use href="#i-arrow" />
+                        </svg></span>
+                    <span class="arch-node">ReAct Agent<small>manager/bots.py</small></span>
+                    <span class="arch-arrow"><svg class="ic">
+                            <use href="#i-arrow" />
+                        </svg></span>
+                    <span class="arch-node">ChromaDB<small>knowledge_base/database.py</small></span>
+                </div>
+                <div class="arch-flow">
+                    <span class="arch-node">ArXiv API<small>scraper.py</small></span>
+                    <span class="arch-arrow"><svg class="ic">
+                            <use href="#i-arrow" />
+                        </svg></span>
+                    <span class="arch-node">JSON Store<small>papers/*.json</small></span>
+                    <span class="arch-arrow"><svg class="ic">
+                            <use href="#i-arrow" />
+                        </svg></span>
+                    <span class="arch-node primary">Gemini AI<small>ai_processor.py</small></span>
+                    <span class="arch-arrow"><svg class="ic">
+                            <use href="#i-arrow" />
+                        </svg></span>
+                    <span class="arch-node">Analytics<small>analytics.py</small></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- FILE STRUCTURE -->
+        <section id="structure">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-folder" />
+                </svg> Project Layout</span>
+            <h2>File Structure</h2>
+            <div class="file-tree">
+                <span class="dir">AfricanNLP/</span><br>
+                ├── <span class="file">app.py</span> <span class="cmt"># Main Gradio application (401 lines)</span><br>
+                ├── <span class="file">.env</span> <span class="cmt"># API keys (GEMINI_API_KEY)</span><br>
+                ├── <span class="file">requirements.txt</span> <span class="cmt"># 23 Python dependencies</span><br>
+                ├── <span class="file">Dockerfile</span> <span class="cmt"># Docker deployment
+                    (python:3.10-slim)</span><br>
+                ├── <span class="file">pyproject.toml</span> <span class="cmt"># Poetry / Hatch build config</span><br>
+                ├── <span class="file">usage_demo.py</span> <span class="cmt"># CLI usage example</span><br>
+                ├── <span class="dir">papers/</span> <span class="cmt"># Scraped paper JSONs</span><br>
+                ├── <span class="dir">chroma_db/</span> <span class="cmt"># ChromaDB persistence</span><br>
+                └── <span class="dir">arxiv_bot/</span> <span class="cmt"># Core package (v0.0.6)</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">__init__.py</span>&nbsp;&nbsp;&nbsp;&nbsp;├── <span
+                    class="file">gui.py</span> <span class="cmt"># HTML card renderer + CSS</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">scraper.py</span> <span class="cmt"># ArXiv bulk
+                    scraper</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">analytics.py</span> <span class="cmt"># Pandas + Plotly
+                    analytics</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">ai_processor.py</span> <span class="cmt"># Gemini
+                    summarizer</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">templates.py</span> <span class="cmt"># LLM prompt
+                    templates</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="file">keywords.txt</span> <span class="cmt"># 31 KB language
+                    keywords</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="dir">agents/</span> <span class="cmt"># researcher.py,
+                    tools.py</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="dir">knowledge_base/</span> <span class="cmt">#
+                    constructors.py, database.py</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="dir">manager/</span> <span class="cmt"># bots.py (Arxiver
+                    agent)</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;└── <span class="dir">utils/</span> <span class="cmt"># logger.py</span>
+            </div>
+        </section>
+
+        <!-- MODULE REFERENCE -->
+        <section id="modules">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-code" />
+                </svg> Deep Dive</span>
+            <h2>Module Reference</h2>
+            <p class="desc">Detailed documentation of every module in the <code>arxiv_bot</code> package.</p>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-target" />
+                    </svg> app.py — Application Entry Point</summary>
+                <div class="inner">
+                    <p>Orchestrator that creates the Gradio UI, wires all events, and launches the server. Initializes
+                        the <code>Arxiver</code> bot and <code>GeminiProcessor</code> at module level.</p>
+                    <table class="doc-table">
+                        <tr>
+                            <th>Function</th>
+                            <th>Description</th>
+                            <th>I/O</th>
+                        </tr>
+                        <tr>
+                            <td><code>respond(message, history)</code></td>
+                            <td>Chat handler — passes user message to the ReAct agent</td>
+                            <td>str → str</td>
+                        </tr>
+                        <tr>
+                            <td><code>add_paper_btn_click(paper_id)</code></td>
+                            <td>Adds a paper to the vector DB via the agent</td>
+                            <td>str → str</td>
+                        </tr>
+                        <tr>
+                            <td><code>refresh_feed()</code></td>
+                            <td>Reads all <code>papers/*.json</code>, sorts by mtime, returns HTML</td>
+                            <td>→ HTML</td>
+                        </tr>
+                        <tr>
+                            <td><code>filter_feed(keyword)</code></td>
+                            <td>Filters feed cards by language/topic keyword</td>
+                            <td>str → HTML</td>
+                        </tr>
+                        <tr>
+                            <td><code>summarize_paper(title)</code></td>
+                            <td>Generates TL;DR via Gemini (fallback: Groq agent)</td>
+                            <td>str → str</td>
+                        </tr>
+                        <tr>
+                            <td><code>read_paper(title)</code></td>
+                            <td>Generates TTS audio of title + abstract via gTTS</td>
+                            <td>str → .mp3 path</td>
+                        </tr>
+                        <tr>
+                            <td><code>run_scraper()</code></td>
+                            <td>Triggers bulk ArXiv fetch (150 papers)</td>
+                            <td>→ str status</td>
+                        </tr>
+                        <tr>
+                            <td><code>run_research(topic)</code></td>
+                            <td>Runs the autonomous deep research pipeline</td>
+                            <td>str → (status, report)</td>
+                        </tr>
+                    </table>
+                    <div class="alert info"><svg>
+                            <use href="#i-info" />
+                        </svg><span>The app supports three LLM backends in priority order: <strong>Gemini</strong> →
+                            <strong>Groq (Llama 3)</strong> → <strong>OpenAI (GPT-3.5)</strong>. Set the corresponding
+                            API key in <code>.env</code>.</span></div>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-brain" />
+                    </svg> manager/bots.py — Arxiver Agent</summary>
+                <div class="inner">
+                    <p>The brain of the system. Implements a <strong>LangChain ReAct agent</strong> with conversational
+                        memory and two custom tools.</p>
+                    <table class="doc-table">
+                        <tr>
+                            <th>Class</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td><code>Arxiver</code></td>
+                            <td>Main agent. Initializes LLM, ChromaDB memory, conversational buffer, and ReAct agent
+                                with a custom prompt template.</td>
+                        </tr>
+                        <tr>
+                            <td><code>AddArticleTool</code></td>
+                            <td>LangChain <code>BaseTool</code> — downloads a paper, chunks with tiktoken, upserts
+                                embeddings into ChromaDB.</td>
+                        </tr>
+                        <tr>
+                            <td><code>GeminiLLM</code></td>
+                            <td>Custom LangChain LLM wrapper around <code>google.generativeai</code> with safety filters
+                                disabled.</td>
+                        </tr>
+                    </table>
+                    <h4 style="margin-top:16px">Agent Tools</h4>
+                    <table class="doc-table">
+                        <tr>
+                            <th>Tool Name</th>
+                            <th>Function</th>
+                        </tr>
+                        <tr>
+                            <td>Search ArXiv Library</td>
+                            <td>Semantic search over ChromaDB via <code>RetrievalQAWithSourcesChain</code></td>
+                        </tr>
+                        <tr>
+                            <td>Add to ArXiv Library</td>
+                            <td>Downloads PDF → extracts text → chunks → embeds → stores in ChromaDB</td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-database" />
+                    </svg> knowledge_base/ — Vector Store &amp; Paper Processing</summary>
+                <div class="inner">
+                    <h4>constructors.py</h4>
+                    <table class="doc-table">
+                        <tr>
+                            <th>Class</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td><code>Arxiv</code></td>
+                            <td>Loads a paper by ID — downloads PDF, extracts text, fetches metadata via ArXiv API,
+                                splits into 300-token chunks (40 overlap) using <code>tiktoken p50k_base</code>.</td>
+                        </tr>
+                        <tr>
+                            <td><code>ArxivGraphScraper</code></td>
+                            <td>Builds a citation graph from a seed paper. Recursively follows references across N
+                                levels.</td>
+                        </tr>
+                    </table>
+                    <h4 style="margin-top:16px">database.py — LocalDatabase</h4>
+                    <p>Wraps <strong>ChromaDB</strong> with <strong>HuggingFace
+                            sentence-transformers/all-MiniLM-L6-v2</strong> embeddings (384-dim). Batch
+                        <code>add()</code> with configurable batch size (default 64).
+                    </p>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-globe" />
+                    </svg> scraper.py — ArXiv Bulk Scraper</summary>
+                <div class="inner">
+                    <table class="doc-table">
+                        <tr>
+                            <th>Feature</th>
+                            <th>Detail</th>
+                        </tr>
+                        <tr>
+                            <td>Default Query</td>
+                            <td><code>cat:cs.CL AND ("African languages" OR "Hausa" OR "Yoruba" ...)</code></td>
+                        </tr>
+                        <tr>
+                            <td>Keyword Chunking</td>
+                            <td>Reads <code>keywords.txt</code> (31 KB), splits into 15-term chunks to stay under ArXiv
+                                URL limits</td>
+                        </tr>
+                        <tr>
+                            <td>Deduplication</td>
+                            <td>Skips papers already saved as JSON; strips version suffixes from IDs</td>
+                        </tr>
+                        <tr>
+                            <td>Output</td>
+                            <td>Saves each paper as <code>papers/{id}.json</code> with title, summary, authors,
+                                categories, dates</td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-search" />
+                    </svg> agents/ — Deep Research Pipeline</summary>
+                <div class="inner">
+                    <h4>researcher.py — ResearcherAgent</h4>
+                    <p>A linear 4-step autonomous agent:</p>
+                    <ol style="margin:12px 0 12px 20px;color:var(--text2);font-size:.88rem">
+                        <li><strong>Search</strong> — Queries ArXiv for top 3 papers matching the topic</li>
+                        <li><strong>Select</strong> — Uses Gemini to pick the most relevant paper ID</li>
+                        <li><strong>Read</strong> — Downloads PDF, extracts first 5 pages of text</li>
+                        <li><strong>Report</strong> — Generates a structured report (Executive Summary, Methodology,
+                            Findings, Relevance)</li>
+                    </ol>
+                    <h4 style="margin-top:16px">tools.py — ResearchTools</h4>
+                    <table class="doc-table">
+                        <tr>
+                            <th>Method</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td><code>search_arxiv(query, max_results)</code></td>
+                            <td>Returns formatted list: <code>[ID] Title (Year) - PDF URL</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>read_paper(paper_id)</code></td>
+                            <td>Downloads PDF → extracts text from first 5 pages via <code>pypdf</code></td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-sparkle" />
+                    </svg> ai_processor.py — Gemini Summarizer</summary>
+                <div class="inner">
+                    <p><code>GeminiProcessor</code> wraps <code>google.generativeai</code> (model:
+                        <strong>gemini-1.5-flash</strong>) for paper summarization.
+                    </p>
+                    <table class="doc-table">
+                        <tr>
+                            <th>Mode</th>
+                            <th>Prompt Strategy</th>
+                        </tr>
+                        <tr>
+                            <td><code>tldr</code></td>
+                            <td>3-bullet summary: Problem → Method → Impact</td>
+                        </tr>
+                        <tr>
+                            <td><code>detailed</code></td>
+                            <td>Full paragraph summary of the abstract</td>
+                        </tr>
+                    </table>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-palette" />
+                    </svg> gui.py / templates.py / logger.py</summary>
+                <div class="inner">
+                    <p><strong>gui.py</strong> — Renders paper cards as HTML with hover effects, category pills, author
+                        badges, and PDF links. Provides the Gradio custom CSS theme.</p>
+                    <p style="margin-top:8px"><strong>templates.py</strong> — Reference extraction prompt: instructs LLM
+                        to parse raw citation text into structured <code>Title | Authors | Year</code> format.</p>
+                    <p style="margin-top:8px"><strong>logger.py</strong> — Color-coded console logging via
+                        <code>colorlog</code> (green = INFO, yellow = WARNING, red = ERROR).
+                    </p>
+                </div>
+            </details>
+        </section>
+
+        <!-- API REFERENCE -->
+        <section id="api">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-zap" />
+                </svg> Interfaces</span>
+            <h2>API Reference</h2>
+            <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+                <div class="card">
+                    <h3>Programmatic Usage</h3>
+                    <div class="code-block">from arxiv_bot.manager.bots import Arxiver<br><br>bot =
+                        Arxiver(verbose=True)<br><br># Ask a question<br>response = bot("What is
+                        attention?")<br>print(response['output'])<br><br># Add a paper by ArXiv ID<br>bot("Add paper
+                        1706.03762")</div>
+                </div>
+                <div class="card">
+                    <h3>Scraper API</h3>
+                    <div class="code-block">from arxiv_bot.scraper import scrape_arxiv<br><br># Fetch 150 AfricanNLP
+                        papers<br>status =
+                        scrape_arxiv(<br>&nbsp;&nbsp;query="AfricanNLP",<br>&nbsp;&nbsp;max_results=150,<br>&nbsp;&nbsp;save_dir="papers"<br>)
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Deep Research API</h3>
+                    <div class="code-block">from arxiv_bot.agents.researcher \<br>&nbsp;&nbsp;import
+                        ResearcherAgent<br><br>agent = ResearcherAgent()<br>report =
+                        agent.run_deep_research(<br>&nbsp;&nbsp;"Transformers for
+                        low-resource<br>&nbsp;&nbsp;&nbsp;languages"<br>)</div>
+                </div>
+                <div class="card">
+                    <h3>AI Summarization API</h3>
+                    <div class="code-block">from arxiv_bot.ai_processor \<br>&nbsp;&nbsp;import
+                        GeminiProcessor<br><br>gemini = GeminiProcessor()<br>summary =
+                        gemini.summarize(<br>&nbsp;&nbsp;"Abstract text here...",<br>&nbsp;&nbsp;type="tldr" # or
+                        "detailed"<br>)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEPENDENCIES -->
+        <section id="deps">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-package" />
+                </svg> Stack</span>
+            <h2>Dependencies</h2>
+            <table class="doc-table">
+                <tr>
+                    <th>Package</th>
+                    <th>Version</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td>gradio</td>
+                    <td>4.37.2</td>
+                    <td>Web UI framework</td>
+                </tr>
+                <tr>
+                    <td>langchain</td>
+                    <td>0.2.16</td>
+                    <td>Agent framework + ReAct</td>
+                </tr>
+                <tr>
+                    <td>langchain-groq</td>
+                    <td>0.1.10</td>
+                    <td>Groq LLM integration</td>
+                </tr>
+                <tr>
+                    <td>chromadb</td>
+                    <td>0.5.5</td>
+                    <td>Local vector database</td>
+                </tr>
+                <tr>
+                    <td>sentence-transformers</td>
+                    <td>3.0.1</td>
+                    <td>all-MiniLM-L6-v2 embeddings</td>
+                </tr>
+                <tr>
+                    <td>google-generativeai</td>
+                    <td>0.7.2</td>
+                    <td>Gemini 1.5 Flash</td>
+                </tr>
+                <tr>
+                    <td>arxiv</td>
+                    <td>2.1.0</td>
+                    <td>ArXiv API client</td>
+                </tr>
+                <tr>
+                    <td>pypdf</td>
+                    <td>4.3.1</td>
+                    <td>PDF text extraction</td>
+                </tr>
+                <tr>
+                    <td>tiktoken</td>
+                    <td>0.7.0</td>
+                    <td>Token counting for chunking</td>
+                </tr>
+                <tr>
+                    <td>pandas</td>
+                    <td>latest</td>
+                    <td>Data analysis</td>
+                </tr>
+                <tr>
+                    <td>plotly</td>
+                    <td>latest</td>
+                    <td>Interactive charts</td>
+                </tr>
+                <tr>
+                    <td>gTTS</td>
+                    <td>2.5.3</td>
+                    <td>Text-to-Speech</td>
+                </tr>
+                <tr>
+                    <td>beautifulsoup4</td>
+                    <td>4.12.3</td>
+                    <td>HTML parsing</td>
+                </tr>
+                <tr>
+                    <td>python-dotenv</td>
+                    <td>1.0.1</td>
+                    <td>Environment variable loading</td>
+                </tr>
+                <tr>
+                    <td>colorlog</td>
+                    <td>6.8.2</td>
+                    <td>Colored console logging</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- SETUP -->
+        <section id="setup">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-rocket" />
+                </svg> Getting Started</span>
+            <h2>Setup &amp; Deployment</h2>
+            <div class="card-grid" style="grid-template-columns:1fr 1fr">
+                <div class="card">
+                    <h3 style="display:flex;align-items:center;gap:8px"><svg class="ic">
+                            <use href="#i-monitor" />
+                        </svg> Local Development</h3>
+                    <div class="code-block"># 1. Clone the repository<br>git clone
+                        https://github.com/alawalmuazu/AfricaNLP.git<br>cd AfricanNLP<br><br># 2. Install
+                        dependencies<br>pip install -r requirements.txt<br><br># 3. Set your API key<br>echo
+                        GEMINI_API_KEY=your_key &gt; .env<br><br># 4. Launch (default port 3000)<br>python app.py</div>
+                </div>
+                <div class="card">
+                    <h3 style="display:flex;align-items:center;gap:8px"><svg class="ic">
+                            <use href="#i-docker" />
+                        </svg> Docker Deployment</h3>
+                    <div class="code-block"># Build the image<br>docker build -t africannlp .<br><br># Run the
+                        container<br>docker run -p 3000:3000 \<br>&nbsp;&nbsp;-e GEMINI_API_KEY=your_key
+                        \<br>&nbsp;&nbsp;africannlp</div>
+                    <div class="alert info"><svg>
+                            <use href="#i-info" />
+                        </svg><span>Uses <code>python:3.10-slim</code> with <code>HF_HOME=/tmp/.huggingface</code> for
+                            containerized model caching.</span></div>
+                </div>
+            </div>
+            <h3 style="margin-top:28px">Environment Variables</h3>
+            <table class="doc-table">
+                <tr>
+                    <th>Variable</th>
+                    <th>Required</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>GEMINI_API_KEY</code></td>
+                    <td>Primary</td>
+                    <td>Google Gemini API key for summarization and deep research</td>
+                </tr>
+                <tr>
+                    <td><code>GROQ_API_KEY</code></td>
+                    <td>Optional</td>
+                    <td>Groq API key — uses Llama 3.1 8B Instant</td>
+                </tr>
+                <tr>
+                    <td><code>OPENAI_API_KEY</code></td>
+                    <td>Optional</td>
+                    <td>OpenAI API key — fallback to GPT-3.5 Turbo</td>
+                </tr>
+                <tr>
+                    <td><code>PORT</code></td>
+                    <td>Optional</td>
+                    <td>Server port (default: 3000)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- UI GUIDE -->
+        <section id="ui">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-monitor" />
+                </svg> Interface</span>
+            <h2>UI Guide</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-newspaper" />
+                        </svg></div>
+                    <h3>Latest Research Tab</h3>
+                    <p>Feed of paper cards sorted by recency. Filter by 12 African languages. Refresh to reload from
+                        disk.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-chart" />
+                        </svg></div>
+                    <h3>Analytics Tab</h3>
+                    <p>Click "Refresh Charts" to generate publication activity bar charts and category pie charts.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-search" />
+                        </svg></div>
+                    <h3>Deep Research Tab</h3>
+                    <p>Enter a topic. The agent searches ArXiv, reads the best paper, and writes a report. Takes ~30
+                        seconds.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-msg" />
+                        </svg></div>
+                    <h3>Sidebar Chatbot</h3>
+                    <p>Ask natural language questions about papers. The agent uses semantic search over ChromaDB to
+                        answer.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-zap" />
+                        </svg></div>
+                    <h3>Paper Actions</h3>
+                    <p>Select a paper → click TL;DR for a 3-bullet AI summary or Listen for an audio abstract.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><svg>
+                            <use href="#i-plus" />
+                        </svg></div>
+                    <h3>Add Paper / Auto-Fetch</h3>
+                    <p>Enter an ArXiv ID to add a specific paper, or bulk-scrape 150 relevant AfricanNLP papers.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIVE DEMO -->
+        <section id="demo">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-monitor" />
+                </svg> Live Preview</span>
+            <h2>Application Preview</h2>
+            <p class="desc">Screenshots of the running ArXiv Research Assistant at <code>localhost:3000</code>, showing
+                the main feed, analytics, and deep research tabs.</p>
+            <div class="screenshot-grid">
+                <div class="screenshot-card">
+                    <img src="app_screenshot.png" alt="Latest Research Feed">
+                    <div class="caption"><svg>
+                            <use href="#i-newspaper" />
+                        </svg> Latest Research — Paper feed with language filters and card layout</div>
+                </div>
+            </div>
+            <div class="screenshot-grid two-col" style="margin-top:16px">
+                <div class="screenshot-card">
+                    <img src="analytics_screenshot.png" alt="Analytics Dashboard">
+                    <div class="caption"><svg>
+                            <use href="#i-chart" />
+                        </svg> Analytics Dashboard — Publication activity and topic distribution charts</div>
+                </div>
+                <div class="screenshot-card">
+                    <img src="deep_research_screenshot.png" alt="Deep Research Agent">
+                    <div class="caption"><svg>
+                            <use href="#i-search" />
+                        </svg> Deep Research — Autonomous research agent with topic input and report generation</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TROUBLESHOOTING -->
+        <section id="troubleshooting">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-info" />
+                </svg> Support</span>
+            <h2>Troubleshooting</h2>
+            <p class="desc">Common issues and their solutions.</p>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-info" />
+                    </svg> "No API Key found" error on startup</summary>
+                <div class="inner">
+                    <p>The app requires at least one LLM API key. Create a <code>.env</code> file in the project root:
+                    </p>
+                    <div class="code-block">GEMINI_API_KEY=your_google_api_key_here</div>
+                    <p>Alternatively, set <code>GROQ_API_KEY</code> or <code>OPENAI_API_KEY</code>.</p>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-info" />
+                    </svg> ChromaDB permission or lock errors</summary>
+                <div class="inner">
+                    <p>ChromaDB writes to <code>./chroma_db/</code>. If you see lock errors, ensure no other process is
+                        using the database. Delete the <code>chroma_db/</code> directory and restart — it will be
+                        recreated automatically.</p>
+                    <div class="code-block"># Delete and restart<br>rm -rf chroma_db/<br>python app.py</div>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-info" />
+                    </svg> Scraper returns 0 papers</summary>
+                <div class="inner">
+                    <p>This usually means ArXiv's API is rate-limiting or temporarily unavailable. Wait a few minutes
+                        and try again. The scraper has built-in retry logic but respects rate limits.</p>
+                    <div class="alert info"><svg>
+                            <use href="#i-info" />
+                        </svg><span>ArXiv limits API requests. Fetching 150 papers across multiple keyword batches may
+                            take 1–2 minutes.</span></div>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-info" />
+                    </svg> Gemini API quota exceeded (429 error)</summary>
+                <div class="inner">
+                    <p>The free tier of Gemini has rate limits. The app handles this gracefully and returns an error
+                        message. Options:</p>
+                    <ul style="margin:10px 0 0 20px;color:var(--text2);font-size:.88rem">
+                        <li>Wait a few minutes and retry</li>
+                        <li>Switch to Groq (free, fast) by setting <code>GROQ_API_KEY</code></li>
+                        <li>Upgrade to a paid Gemini API plan</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-info" />
+                    </svg> Port already in use</summary>
+                <div class="inner">
+                    <p>If port 3000 is occupied, either kill the existing process or set a different port:</p>
+                    <div class="code-block"># Use a different port<br>PORT=8080 python app.py</div>
+                </div>
+            </details>
+
+            <details class="accordion">
+                <summary><svg>
+                        <use href="#i-info" />
+                    </svg> sentence-transformers model download slow or fails</summary>
+                <div class="inner">
+                    <p>On first run, the app downloads <code>all-MiniLM-L6-v2</code> (~80 MB). Ensure internet access.
+                        For Docker, the model is cached in <code>/tmp/.huggingface</code>. If behind a proxy, set
+                        <code>HF_HOME</code> and <code>TRANSFORMERS_CACHE</code> environment variables.
+                    </p>
+                </div>
+            </details>
+        </section>
+
+        <!-- CHANGELOG -->
+        <section id="changelog">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-layers" />
+                </svg> History</span>
+            <h2>Changelog</h2>
+            <table class="doc-table">
+                <tr>
+                    <th>Version</th>
+                    <th>Date</th>
+                    <th>Changes</th>
+                </tr>
+                <tr>
+                    <td><code>0.0.6</code></td>
+                    <td>Current</td>
+                    <td>Gemini 1.5 Flash integration, Deep Research Agent, Analytics Dashboard, TTS, language filtering,
+                        production documentation</td>
+                </tr>
+                <tr>
+                    <td><code>0.0.5</code></td>
+                    <td>—</td>
+                    <td>ChromaDB migration (replaced Pinecone), HuggingFace embeddings, local-first architecture</td>
+                </tr>
+                <tr>
+                    <td><code>0.0.4</code></td>
+                    <td>—</td>
+                    <td>Gradio blog-style feed, ArXiv bulk scraper with keyword chunking, paper card rendering</td>
+                </tr>
+                <tr>
+                    <td><code>0.0.3</code></td>
+                    <td>—</td>
+                    <td>Groq LLM support (Llama 3), ReAct agent with custom prompt template</td>
+                </tr>
+                <tr>
+                    <td><code>0.0.2</code></td>
+                    <td>—</td>
+                    <td>ArXiv graph scraper, citation traversal, reference extraction</td>
+                </tr>
+                <tr>
+                    <td><code>0.0.1</code></td>
+                    <td>—</td>
+                    <td>Initial release — OpenAI + Pinecone, basic chatbot, paper loading</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- CONTRIBUTING -->
+        <section id="contributing">
+            <span class="section-label"><svg class="ic">
+                    <use href="#i-code" />
+                </svg> Open Source</span>
+            <h2>Contributing</h2>
+            <p class="desc">Contributions are welcome. Here's how to get started.</p>
+            <div class="card-grid" style="grid-template-columns:1fr 1fr">
+                <div class="card">
+                    <h3 style="display:flex;align-items:center;gap:8px"><svg class="ic">
+                            <use href="#i-code" />
+                        </svg> Development Workflow</h3>
+                    <div class="code-block"># 1. Fork the repository<br>git fork
+                        https://github.com/alawalmuazu/AfricaNLP<br><br># 2. Create a feature branch<br>git checkout -b
+                        feature/your-feature<br><br># 3. Make your changes and test<br>python app.py<br><br># 4. Submit
+                        a pull request<br>git push origin feature/your-feature</div>
+                </div>
+                <div class="card">
+                    <h3 style="display:flex;align-items:center;gap:8px"><svg class="ic">
+                            <use href="#i-target" />
+                        </svg> Areas of Contribution</h3>
+                    <ul style="margin:12px 0 0 0;list-style:none;font-size:.85rem;color:var(--text2);line-height:2">
+                        <li>• Adding more African language keywords to <code>keywords.txt</code></li>
+                        <li>• Improving the analytics engine with new chart types</li>
+                        <li>• Building additional AI tools for the ReAct agent</li>
+                        <li>• Enhancing the Gradio UI and card designs</li>
+                        <li>• Writing tests and improving error handling</li>
+                        <li>• Docker optimizations and CI/CD pipelines</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Built by <a href="https://github.com/alawalmuazu">ArewaDS</a> &amp; AfricanNLP Community · MIT License ·
+            2024–2026</p>
+        <p style="margin-top:8px"><a href="https://github.com/alawalmuazu/AfricaNLP">GitHub</a> · <a
+                href="https://huggingface.co/spaces/ArewaDS/arxiv-research-assistant?logs=container">HuggingFace
+                Space</a></p>
+    </footer>
+
+    <script>
+        const toggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const sunIcon = toggle.querySelector('.icon-sun');
+        const moonIcon = toggle.querySelector('.icon-moon');
+        function applyTheme(t) {
+            html.setAttribute('data-theme', t);
+            if (t === 'dark') { sunIcon.style.display = 'inline'; moonIcon.style.display = 'none' }
+            else { sunIcon.style.display = 'none'; moonIcon.style.display = 'inline' }
+            localStorage.setItem('theme', t);
+        }
+        const saved = localStorage.getItem('theme');
+        if (saved) applyTheme(saved); else applyTheme('light');
+        toggle.addEventListener('click', () => {
+            applyTheme(html.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+        });
+    </script>
+</body>
+
+</html>
